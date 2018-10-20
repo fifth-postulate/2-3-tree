@@ -1,4 +1,4 @@
-module Tree.Kernel exposing (Tree, empty, insert)
+module Tree.Kernel exposing (Tree(..), empty, insert)
 
 
 type Tree a
