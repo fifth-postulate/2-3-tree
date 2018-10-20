@@ -1,7 +1,8 @@
 module TreeTests exposing (suite)
 
+import Combinatorics
 import Expect exposing (Expectation)
-import Fuzz exposing (Fuzzer, int, list, string)
+import Fuzz exposing (Fuzzer, int, list, map3, string)
 import Test exposing (..)
 import Tree exposing (empty, insert)
 import Tree.Kernel exposing (Tree(..))
@@ -37,6 +38,19 @@ suite =
              ]
                 |> (List.map <| insertTest String.fromInt)
             )
+        , fuzz (map3 toList3 int int int) "order of insertion with 3 elements does not matter" <|
+            \aList ->
+                let
+                    aTree =
+                        Tree.fromList aList
+
+                    same =
+                        aList
+                            |> Combinatorics.permutationsOf
+                            |> List.map Tree.fromList
+                            |> List.all (\tree -> tree == aTree)
+                in
+                Expect.true "all trees should be the same" same
         ]
 
 
@@ -60,3 +74,8 @@ insertTest toString ( toInsert, expected ) =
                     List.foldl (\element tree -> insert element tree) empty toInsert
             in
             Expect.equal actual expected
+
+
+toList3 : a -> a -> a -> List a
+toList3 a b c =
+    [ a, b, c ]
