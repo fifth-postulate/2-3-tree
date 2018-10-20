@@ -24,10 +24,18 @@ suite =
             ]
         , describe "insert"
             ([ ( [ 1 ], Node2 ( 1, 1 ) Empty Empty )
+             , ( [ 1, 1 ], Node2 ( 1, 2 ) Empty Empty )
              , ( [ 1, 2 ], Node3 ( 1, 1 ) ( 2, 1 ) Empty Empty Empty )
              , ( [ 2, 1 ], Node3 ( 1, 1 ) ( 2, 1 ) Empty Empty Empty )
+             , ( [ 1, 3, 0 ], Node2 ( 1, 1 ) (Node2 ( 0, 1 ) Empty Empty) (Node2 ( 3, 1 ) Empty Empty) )
+             , ( [ 1, 3, 2 ], Node2 ( 2, 1 ) (Node2 ( 1, 1 ) Empty Empty) (Node2 ( 3, 1 ) Empty Empty) )
+             , ( [ 1, 3, 4 ], Node2 ( 3, 1 ) (Node2 ( 1, 1 ) Empty Empty) (Node2 ( 4, 1 ) Empty Empty) )
+             , ( [ 1, 3, 4, 0 ], Node2 ( 3, 1 ) (Node3 ( 0, 1 ) ( 1, 1 ) Empty Empty Empty) (Node2 ( 4, 1 ) Empty Empty) )
+             , ( [ 1, 3, 4, 0, 5 ], Node2 ( 3, 1 ) (Node3 ( 0, 1 ) ( 1, 1 ) Empty Empty Empty) (Node3 ( 4, 1 ) ( 5, 1 ) Empty Empty Empty) )
+             , ( [ 1, 3, 4, 0, 5, 2 ], Node3 ( 1, 1 ) ( 3, 1 ) (Node2 ( 0, 1 ) Empty Empty) (Node2 ( 2, 1 ) Empty Empty) (Node3 ( 4, 1 ) ( 5, 1 ) Empty Empty Empty) )
+             , ( [ 1, 3, 4, 0, 5, 2, 6 ], Node2 ( 3, 1 ) (Node2 ( 1, 1 ) (Node2 ( 0, 1 ) Empty Empty) (Node2 ( 2, 1 ) Empty Empty)) (Node2 ( 5, 1 ) (Node2 ( 4, 1 ) Empty Empty) (Node2 ( 6, 1 ) Empty Empty)) )
              ]
-                |> (List.map <| insertTest (String.fromInt))
+                |> (List.map <| insertTest String.fromInt)
             )
         ]
 
