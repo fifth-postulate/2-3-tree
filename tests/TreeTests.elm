@@ -23,16 +23,32 @@ suite =
                     Expect.equal actual expected
             ]
         , describe "insert"
-            [ test "insert a value into an empty tree" <|
-                  \_ ->
-                  let
-                      actual =
-                          empty
-                              |> insert 1
-
-                      expected =
-                          Node2 (1, 1) Empty Empty
-                  in
-                      Expect.equal actual expected
-            ]
+            ([ ( [ 1 ], Node2 ( 1, 1 ) Empty Empty )
+             , ( [ 1, 2 ], Node3 ( 1, 1 ) ( 2, 1 ) Empty Empty Empty )
+             , ( [ 2, 1 ], Node3 ( 1, 1 ) ( 2, 1 ) Empty Empty Empty )
+             ]
+                |> (List.map <| insertTest (String.fromInt))
+            )
         ]
+
+
+insertTest : (comparable -> String) -> ( List comparable, Tree comparable ) -> Test
+insertTest toString ( toInsert, expected ) =
+    let
+        description =
+            toInsert
+                |> List.map toString
+                |> String.join ", "
+
+        testName =
+            "insert "
+                ++ description
+                ++ " into an empty tree should create an expected tree"
+    in
+    test testName <|
+        \_ ->
+            let
+                actual =
+                    List.foldl (\element tree -> insert element tree) empty toInsert
+            in
+            Expect.equal actual expected
