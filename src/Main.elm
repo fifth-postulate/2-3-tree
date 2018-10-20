@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Html exposing (Html)
+import Html.Attributes as Attribute
 import Html.Events as Event
 import Tree exposing (Tree, empty, insert)
 
@@ -16,11 +17,11 @@ main =
 
 emptyModel : Model Int
 emptyModel =
-    { tree = empty, n = Nothing, message = Nothing }
+    { tree = empty, input = Nothing }
 
 
 type alias Model a =
-    { tree : Tree a, n : Maybe Int, message : Maybe String }
+    { tree : Tree a, input : Maybe String }
 
 
 type Message
@@ -33,41 +34,56 @@ update msg model =
     case msg of
         Update value ->
             let
-                n =
-                    value
-                        |> String.toInt
+                input =
+                    case value of
+                        "" ->
+                            Nothing
 
-                message =
-                    n
-                        |> Maybe.map (\m -> "entered: " ++ String.fromInt m)
-                        |> Maybe.withDefault "not a number"
+                        _ ->
+                            Just value
+
             in
-            { model | n = n, message = Just message }
+            { model | input = input }
 
         Insert ->
             let
                 tree =
-                    model.n
+                    model.input
+                        |> Maybe.andThen String.toInt
                         |> Maybe.map (\n -> insert n model.tree)
                         |> Maybe.withDefault model.tree
             in
-            { model | tree = tree, n = Nothing, message = Nothing }
+            { model | tree = tree, input = Nothing }
 
 
 view : (Tree a -> String) -> Model a -> Html Message
 view toString model =
     let
+        n =
+            model.input
+                |> Maybe.andThen String.toInt
+
         text =
-            model.message
+            n
+                |> Maybe.map (\_ -> "")
+                |> Maybe.withDefault "Enter a number"
+
+        value =
+            model.input
                 |> Maybe.withDefault ""
+
+        disabled =
+            n
+                |> Maybe.map (\_ -> False)
+                |> Maybe.withDefault True
     in
     Html.div []
         [ Html.div []
             [ Html.span [] [ Html.text text ]
             ]
         , Html.div []
-            [ Html.input [ Event.onInput Update ] []
-            , Html.button [ Event.onClick Insert ] [ Html.text "insert" ]
+            [ Html.input [ Event.onInput Update, Attribute.value value ] []
+            , Html.button [ Event.onClick Insert, Attribute.disabled disabled ] [ Html.text "insert" ]
             ]
         , Html.pre [] [ Html.text (toString model.tree) ]
         ]
