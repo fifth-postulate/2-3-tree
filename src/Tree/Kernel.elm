@@ -1,4 +1,4 @@
-module Tree.Kernel exposing (Tree(..), empty, insert, walk, member)
+module Tree.Kernel exposing (Tree(..), empty, insert, member, walk, all)
 
 
 type Tree a
@@ -368,6 +368,19 @@ member needle haystack =
 
         Node3 ( a, _ ) ( b, _ ) left middle right ->
             a == needle || b == needle || member needle left || member needle middle || member needle right
+
+
+all : (a -> Bool) -> Tree a -> Bool
+all predicate tree =
+    case tree of
+        Empty ->
+            True
+
+        Node2 ( a, _ ) left right ->
+            predicate a && all predicate left && all predicate right
+
+        Node3 ( a, _ ) ( b, _ ) left middle right ->
+            predicate a && predicate b && all predicate left && all predicate middle && all predicate right
 
 
 walk : (() -> o) -> (( a, Int ) -> o -> o -> o) -> (( a, Int ) -> ( a, Int ) -> o -> o -> o -> o) -> Tree a -> o

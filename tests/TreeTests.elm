@@ -58,6 +58,19 @@ suite =
                   in
                       Expect.equal (Tree.size aTree) (List.length aList)
             ]
+        , describe "all"
+            [ fuzz (list int) "all works as expected" <|
+                  \aList ->
+                  let
+                      aTree =
+                          Tree.fromList aList
+
+                      predicate n =
+                          n > 0
+                  in
+                      Expect.equal (Tree.all predicate aTree) (List.all predicate aList)
+
+            ]
         , describe "from fuzz to test"
             [ test "repeated elements should be recorder correctly" <|
                 \_ ->

@@ -1,7 +1,7 @@
 module Tree exposing
     ( Tree
     , empty, fromList, insert
-    , member, size
+    , member, size, all
     , toList
     )
 
@@ -129,3 +129,8 @@ size tree =
             aCount + bCount + leftCount + middleCount + rightCount
     in
         Kernel.walk emptyCase node2Case node3Case tree
+
+{-| Determine if the predicate holds for all the elements in the 2-3 tree. -}
+all : (a -> Bool) -> Tree a -> Bool
+all predicate tree =
+    Kernel.all predicate tree
