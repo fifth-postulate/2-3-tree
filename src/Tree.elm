@@ -1,7 +1,7 @@
 module Tree exposing
     ( Tree
     , empty, fromList, insert
-    , member
+    , member, size
     , toList
     )
 
@@ -36,7 +36,7 @@ If the elements in the tree are not known at the time of construction on could u
 
 # Utilities
 
-@docs member
+@docs member, size
 
 
 # Conversion
@@ -113,3 +113,19 @@ toList tree =
 member : a -> Tree a -> Bool
 member needle haystack =
     Kernel.member needle haystack
+
+
+{-| Determines the number of elements in the 2-3 tree. -}
+size : Tree a -> Int
+size tree =
+    let
+        emptyCase _ =
+            0
+
+        node2Case (_, count) leftCount rightCount =
+            count + leftCount + rightCount
+
+        node3Case (_, aCount) (_, bCount) leftCount middleCount rightCount =
+            aCount + bCount + leftCount + middleCount + rightCount
+    in
+        Kernel.walk emptyCase node2Case node3Case tree

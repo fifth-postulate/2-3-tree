@@ -50,6 +50,14 @@ suite =
                   in
                       Expect.true "all elements are members" allMember
             ]
+        , describe "size"
+            [ fuzz (list int) "the size is determined correctly" <|
+                  \aList ->
+                  let
+                      aTree = Tree.fromList aList
+                  in
+                      Expect.equal (Tree.size aTree) (List.length aList)
+            ]
         , describe "from fuzz to test"
             [ test "repeated elements should be recorder correctly" <|
                 \_ ->
