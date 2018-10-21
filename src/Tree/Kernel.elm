@@ -1,4 +1,4 @@
-module Tree.Kernel exposing (Tree(..), empty, insert, toList)
+module Tree.Kernel exposing (Tree(..), empty, insert, walk)
 
 
 type Tree a
@@ -355,31 +355,6 @@ insert element tree =
                                             insert element r
                                     in
                                     Node3 ( a, aCount ) ( b, bCount ) l m subTree
-
-
-toList : Tree a -> List a
-toList aTree =
-    let
-        emptyCase _ =
-            []
-
-        node2Case ( a, aCount ) left right =
-            List.concat
-                [ left
-                , List.repeat aCount a
-                , right
-                ]
-
-        node3Case (a, aCount) (b, bCount) left middle right =
-            List.concat
-                [ left
-                , List.repeat aCount a
-                , middle
-                , List.repeat bCount b
-                , right
-                ]
-    in
-    walk emptyCase node2Case node3Case aTree
 
 walk : (() -> o) -> (( a, Int ) -> o -> o -> o) -> (( a, Int ) -> ( a, Int ) -> o -> o -> o -> o) -> Tree a -> o
 walk emptyCase node2Case node3Case tree =

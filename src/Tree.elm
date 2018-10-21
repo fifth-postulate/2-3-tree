@@ -23,4 +23,24 @@ fromList aList =
 
 toList : Tree a -> List a
 toList tree =
-    Kernel.toList tree
+    let
+        emptyCase _ =
+            []
+
+        node2Case ( a, aCount ) left right =
+            List.concat
+                [ left
+                , List.repeat aCount a
+                , right
+                ]
+
+        node3Case (a, aCount) (b, bCount) left middle right =
+            List.concat
+                [ left
+                , List.repeat aCount a
+                , middle
+                , List.repeat bCount b
+                , right
+                ]
+    in
+    Kernel.walk emptyCase node2Case node3Case tree
