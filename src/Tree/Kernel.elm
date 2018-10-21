@@ -1,4 +1,4 @@
-module Tree.Kernel exposing (Tree(..), empty, insert, walk)
+module Tree.Kernel exposing (Tree(..), empty, insert, walk, member)
 
 
 type Tree a
@@ -355,6 +355,20 @@ insert element tree =
                                             insert element r
                                     in
                                     Node3 ( a, aCount ) ( b, bCount ) l m subTree
+
+
+member : a -> Tree a -> Bool
+member needle haystack =
+    case haystack of
+        Empty ->
+            False
+
+        Node2 ( a, _ ) left right ->
+            a == needle || member needle left || member needle right
+
+        Node3 ( a, _ ) ( b, _ ) left middle right ->
+            a == needle || b == needle || member needle left || member needle middle || member needle right
+
 
 walk : (() -> o) -> (( a, Int ) -> o -> o -> o) -> (( a, Int ) -> ( a, Int ) -> o -> o -> o -> o) -> Tree a -> o
 walk emptyCase node2Case node3Case tree =

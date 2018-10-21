@@ -1,4 +1,4 @@
-module Tree exposing (Tree, empty, fromList, insert, toList)
+module Tree exposing (Tree, empty, fromList, insert, toList, member)
 
 import Tree.Kernel as Kernel
 
@@ -44,3 +44,7 @@ toList tree =
                 ]
     in
     Kernel.walk emptyCase node2Case node3Case tree
+
+member : a -> Tree a -> Bool
+member needle haystack =
+    Kernel.member needle haystack

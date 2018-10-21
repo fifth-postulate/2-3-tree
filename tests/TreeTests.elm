@@ -38,6 +38,18 @@ suite =
              ]
                 |> (List.map <| insertTest String.fromInt)
             )
+        , describe "member"
+            [ fuzz (list int) "all elements inserted in a tree are members" <|
+                  \aList ->
+                  let
+                      haystack = Tree.fromList aList
+
+                      allMember =
+                          aList
+                              |> List.all (\needle -> Tree.member needle haystack)
+                  in
+                      Expect.true "all elements are members" allMember
+            ]
         , describe "from fuzz to test"
             [ test "repeated elements should be recorder correctly" <|
                 \_ ->
