@@ -1,4 +1,4 @@
-module Tree exposing (Tree, empty, fromList, insert)
+module Tree exposing (Tree, empty, fromList, insert, toList)
 
 import Tree.Kernel as Kernel
 
@@ -17,5 +17,10 @@ insert element tree =
 
 
 fromList : List comparable -> Tree comparable
-fromList =
-    List.foldl (\element tree -> insert element tree) empty
+fromList aList =
+    List.foldl (\element tree -> insert element tree) empty aList
+
+
+toList : Tree a -> List a
+toList tree =
+    Kernel.toList tree

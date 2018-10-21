@@ -41,7 +41,6 @@ update msg model =
 
                         _ ->
                             Just value
-
             in
             { model | input = input }
 

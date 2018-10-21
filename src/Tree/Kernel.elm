@@ -1,4 +1,4 @@
-module Tree.Kernel exposing (Tree(..), empty, insert)
+module Tree.Kernel exposing (Tree(..), empty, insert, toList)
 
 
 type Tree a
@@ -126,7 +126,6 @@ insert element tree =
                                                 left
                                                 (Node3 ( subA, subACount ) ( subB, subBCount + 1 ) l m r)
 
-
                                         ( _, GT ) ->
                                             Node3
                                                 ( a, count )
@@ -142,219 +141,240 @@ insert element tree =
                                     in
                                     Node2 ( a, count ) subTree right
 
-        Node3 (a, aCount) (b, bCount) l m r ->
-            case (compare element a, compare element b) of
-                (LT, _) ->
+        Node3 ( a, aCount ) ( b, bCount ) l m r ->
+            case ( compare element a, compare element b ) of
+                ( LT, _ ) ->
                     case l of
                         Empty ->
-                            Node2 (a, aCount)
-                                (Node2 (element, 1) Empty Empty)
-                                (Node2 (b, bCount) Empty Empty)
+                            Node2 ( a, aCount )
+                                (Node2 ( element, 1 ) Empty Empty)
+                                (Node2 ( b, bCount ) Empty Empty)
 
                         Node2 _ _ _ ->
                             let
                                 subTree =
                                     insert element l
                             in
-                                Node3 (a, aCount) (b, bCount) subTree m r
+                            Node3 ( a, aCount ) ( b, bCount ) subTree m r
 
-                        Node3 (subA, subACount) (subB, subBCount) subL subM subR ->
+                        Node3 ( subA, subACount ) ( subB, subBCount ) subL subM subR ->
                             case subL of
                                 Empty ->
-                                    case (compare element subA, compare element subB) of
-                                        (LT, _) ->
-                                            Node2 (a, aCount)
-                                                (Node2 (subA, subACount)
-                                                     (Node2 (element, 1) Empty Empty)
-                                                     (Node2 (subB, subBCount) Empty Empty)
+                                    case ( compare element subA, compare element subB ) of
+                                        ( LT, _ ) ->
+                                            Node2 ( a, aCount )
+                                                (Node2 ( subA, subACount )
+                                                    (Node2 ( element, 1 ) Empty Empty)
+                                                    (Node2 ( subB, subBCount ) Empty Empty)
                                                 )
-                                                (Node2 (b, bCount) m r)
+                                                (Node2 ( b, bCount ) m r)
 
-                                        (EQ, _) ->
-                                            Node3 (a, aCount) (b, bCount)
-                                                (Node3 (subA, subACount + 1) (subB, subBCount) subL subM subR)
+                                        ( EQ, _ ) ->
+                                            Node3 ( a, aCount )
+                                                ( b, bCount )
+                                                (Node3 ( subA, subACount + 1 ) ( subB, subBCount ) subL subM subR)
                                                 m
                                                 r
 
-                                        (GT, LT) ->
-                                            Node2 (a, aCount)
-                                                (Node2 (element, 1)
-                                                     (Node2 (subA, subACount) Empty Empty)
-                                                     (Node2 (subB, subBCount) Empty Empty)
+                                        ( GT, LT ) ->
+                                            Node2 ( a, aCount )
+                                                (Node2 ( element, 1 )
+                                                    (Node2 ( subA, subACount ) Empty Empty)
+                                                    (Node2 ( subB, subBCount ) Empty Empty)
                                                 )
-                                                (Node2 (b, bCount) m r)
+                                                (Node2 ( b, bCount ) m r)
 
-
-                                        (_, EQ) ->
-                                            Node3 (a, aCount) (b, bCount)
-                                                (Node3 (subA, subACount) (subB, subBCount + 1) subL subM subR)
+                                        ( _, EQ ) ->
+                                            Node3 ( a, aCount )
+                                                ( b, bCount )
+                                                (Node3 ( subA, subACount ) ( subB, subBCount + 1 ) subL subM subR)
                                                 m
                                                 r
 
-                                        (_, GT) ->
-                                            Node2 (a, aCount)
-                                                (Node2 (subB, subBCount)
-                                                     (Node2 (subA, subACount) Empty Empty)
-                                                     (Node2 (element, 1) Empty Empty)
+                                        ( _, GT ) ->
+                                            Node2 ( a, aCount )
+                                                (Node2 ( subB, subBCount )
+                                                    (Node2 ( subA, subACount ) Empty Empty)
+                                                    (Node2 ( element, 1 ) Empty Empty)
                                                 )
-                                                (Node2 (b, bCount) m r)
-
+                                                (Node2 ( b, bCount ) m r)
 
                                 _ ->
                                     let
                                         subTree =
                                             insert element l
                                     in
-                                        Node3 (a, aCount) (b, bCount) subTree m r
+                                    Node3 ( a, aCount ) ( b, bCount ) subTree m r
 
-                (EQ, _) ->
-                    Node3 (a, aCount + 1) (b, bCount) l m r
+                ( EQ, _ ) ->
+                    Node3 ( a, aCount + 1 ) ( b, bCount ) l m r
 
-                (GT, LT) ->
+                ( GT, LT ) ->
                     case m of
                         Empty ->
-                            Node2 (element, 1)
-                                (Node2 (a, aCount) Empty Empty)
-                                (Node2 (b, bCount) Empty Empty)
+                            Node2 ( element, 1 )
+                                (Node2 ( a, aCount ) Empty Empty)
+                                (Node2 ( b, bCount ) Empty Empty)
 
                         Node2 _ _ _ ->
                             let
                                 subTree =
                                     insert element m
                             in
-                                Node3 (a, aCount) (b, bCount) l subTree r
+                            Node3 ( a, aCount ) ( b, bCount ) l subTree r
 
-                        Node3 (subA, subACount) (subB, subBCount) subL subM subR ->
+                        Node3 ( subA, subACount ) ( subB, subBCount ) subL subM subR ->
                             case subM of
                                 Empty ->
-                                    case (compare element subA, compare element subB) of
-                                        (LT, _) ->
-                                            Node2 (subA, subACount)
-                                                (Node2 (a, aCount)
-                                                     l
-                                                     (Node2 (element, 1) Empty Empty)
+                                    case ( compare element subA, compare element subB ) of
+                                        ( LT, _ ) ->
+                                            Node2 ( subA, subACount )
+                                                (Node2 ( a, aCount )
+                                                    l
+                                                    (Node2 ( element, 1 ) Empty Empty)
                                                 )
-                                                (Node2 (b, bCount)
-                                                     (Node2 (subB, subBCount) Empty Empty)
-                                                     r
+                                                (Node2 ( b, bCount )
+                                                    (Node2 ( subB, subBCount ) Empty Empty)
+                                                    r
                                                 )
 
-                                        (EQ, _) ->
-                                            Node3 (a, aCount) (b, bCount)
+                                        ( EQ, _ ) ->
+                                            Node3 ( a, aCount )
+                                                ( b, bCount )
                                                 l
-                                                (Node3 (subA, subACount + 1) (subB, subBCount) subL subM subR)
+                                                (Node3 ( subA, subACount + 1 ) ( subB, subBCount ) subL subM subR)
                                                 r
 
-                                        (GT, LT) ->
-                                            Node2 (a, aCount)
-                                                (Node2 (element, 1)
-                                                     l
-                                                     (Node2 (subA, subACount) Empty Empty)
+                                        ( GT, LT ) ->
+                                            Node2 ( a, aCount )
+                                                (Node2 ( element, 1 )
+                                                    l
+                                                    (Node2 ( subA, subACount ) Empty Empty)
                                                 )
-                                                (Node2 (b, bCount)
-                                                     (Node2 (subB, subBCount) Empty Empty)
-                                                     r
+                                                (Node2 ( b, bCount )
+                                                    (Node2 ( subB, subBCount ) Empty Empty)
+                                                    r
                                                 )
 
-
-                                        (_, EQ) ->
-                                            Node3 (a, aCount) (b, bCount)
+                                        ( _, EQ ) ->
+                                            Node3 ( a, aCount )
+                                                ( b, bCount )
                                                 l
-                                                (Node3 (subA, subACount) (subB, subBCount + 1) subL subM subR)
+                                                (Node3 ( subA, subACount ) ( subB, subBCount + 1 ) subL subM subR)
                                                 r
 
-                                        (_, GT) ->
-                                            Node2 (subB, subBCount)
-                                                (Node2 (a, aCount)
-                                                     l
-                                                     (Node2 (subA, subACount) Empty Empty)
+                                        ( _, GT ) ->
+                                            Node2 ( subB, subBCount )
+                                                (Node2 ( a, aCount )
+                                                    l
+                                                    (Node2 ( subA, subACount ) Empty Empty)
                                                 )
-                                                (Node2 (b, bCount)
-                                                     (Node2 (element, 1) Empty Empty)
-                                                     r)
+                                                (Node2 ( b, bCount )
+                                                    (Node2 ( element, 1 ) Empty Empty)
+                                                    r
+                                                )
 
                                 _ ->
                                     let
                                         subTree =
                                             insert element m
                                     in
-                                        Node3 (a, aCount) (b, bCount) l subTree r
+                                    Node3 ( a, aCount ) ( b, bCount ) l subTree r
 
+                ( _, EQ ) ->
+                    Node3 ( a, aCount ) ( b, bCount + 1 ) l m r
 
-
-                (_, EQ) ->
-                    Node3 (a, aCount) (b, bCount + 1) l m r
-
-                (_, GT) ->
+                ( _, GT ) ->
                     case r of
                         Empty ->
-                            Node2 (b, bCount)
-                                (Node2 (a, aCount) Empty Empty)
-                                (Node2 (element, 1) Empty Empty)
+                            Node2 ( b, bCount )
+                                (Node2 ( a, aCount ) Empty Empty)
+                                (Node2 ( element, 1 ) Empty Empty)
 
                         Node2 _ _ _ ->
                             let
                                 subTree =
-                                    insert element m
+                                    insert element r
                             in
-                                Node3 (a, aCount) (b, bCount) l m subTree
+                            Node3 ( a, aCount ) ( b, bCount ) l m subTree
 
-                        Node3 (subA, subACount) (subB, subBCount) subL subM subR ->
+                        Node3 ( subA, subACount ) ( subB, subBCount ) subL subM subR ->
                             case subR of
                                 Empty ->
-                                    case (compare element subA, compare element subB) of
-                                        (LT, _) ->
-                                            Node2 (b, bCount)
-                                                (Node2 (a, aCount)
-                                                     l
-                                                     m
+                                    case ( compare element subA, compare element subB ) of
+                                        ( LT, _ ) ->
+                                            Node2 ( b, bCount )
+                                                (Node2 ( a, aCount )
+                                                    l
+                                                    m
                                                 )
-                                                (Node2 (subA, subACount)
-                                                     (Node2 (element, 1) Empty Empty)
-                                                     (Node2 (subB, subBCount) Empty Empty)
+                                                (Node2 ( subA, subACount )
+                                                    (Node2 ( element, 1 ) Empty Empty)
+                                                    (Node2 ( subB, subBCount ) Empty Empty)
                                                 )
 
-                                        (EQ, _) ->
-                                            Node3 (a, aCount) (b, bCount)
+                                        ( EQ, _ ) ->
+                                            Node3 ( a, aCount )
+                                                ( b, bCount )
                                                 l
                                                 m
-                                                (Node3 (subA, subACount + 1) (subB, subBCount) subL subM subR)
+                                                (Node3 ( subA, subACount + 1 ) ( subB, subBCount ) subL subM subR)
 
-                                        (GT, LT) ->
-                                            Node2 (b, bCount)
-                                                (Node2 (a, aCount)
-                                                     l
-                                                     m
+                                        ( GT, LT ) ->
+                                            Node2 ( b, bCount )
+                                                (Node2 ( a, aCount )
+                                                    l
+                                                    m
                                                 )
-                                                (Node2 (element, 1)
-                                                     (Node2 (subA, subACount) Empty Empty)
-                                                     (Node2 (subB, subBCount) Empty Empty)
+                                                (Node2 ( element, 1 )
+                                                    (Node2 ( subA, subACount ) Empty Empty)
+                                                    (Node2 ( subB, subBCount ) Empty Empty)
                                                 )
 
-
-                                        (_, EQ) ->
-                                            Node3 (a, aCount) (b, bCount)
+                                        ( _, EQ ) ->
+                                            Node3 ( a, aCount )
+                                                ( b, bCount )
                                                 l
                                                 m
-                                                (Node3 (subA, subACount) (subB, subBCount + 1) subL subM subR)
+                                                (Node3 ( subA, subACount ) ( subB, subBCount + 1 ) subL subM subR)
 
-                                        (_, GT) ->
-                                            Node2 (b, bCount)
-                                                (Node2 (a, aCount)
-                                                     l
-                                                     m
+                                        ( _, GT ) ->
+                                            Node2 ( b, bCount )
+                                                (Node2 ( a, aCount )
+                                                    l
+                                                    m
                                                 )
-                                                (Node2 (subB, subBCount)
-                                                     (Node2 (subA, subACount) Empty Empty)
-                                                     (Node2 (element, 1) Empty Empty)
-                                                     )
+                                                (Node2 ( subB, subBCount )
+                                                    (Node2 ( subA, subACount ) Empty Empty)
+                                                    (Node2 ( element, 1 ) Empty Empty)
+                                                )
 
                                 _ ->
                                     let
                                         subTree =
-                                            insert element m
+                                            insert element r
                                     in
-                                        Node3 (a, aCount) (b, bCount) l subTree r
+                                    Node3 ( a, aCount ) ( b, bCount ) l m subTree
 
 
+toList : Tree a -> List a
+toList aTree =
+    case aTree of
+        Empty ->
+            []
 
+        Node2 ( a, aCount ) left right ->
+            List.concat
+                [ toList left
+                , List.repeat aCount a
+                , toList right
+                ]
+
+        Node3 ( a, aCount ) ( b, bCount ) left middle right ->
+            List.concat
+                [ toList left
+                , List.repeat aCount a
+                , toList middle
+                , List.repeat bCount b
+                , toList right
+                ]

@@ -38,6 +38,18 @@ suite =
              ]
                 |> (List.map <| insertTest String.fromInt)
             )
+        , describe "from fuzz to test"
+            [ test "repeated elements should be recorder correctly" <|
+                \_ ->
+                    let
+                        actual =
+                            Tree.fromList [ 3, 4, 0, 1, 2, 4 ]
+
+                        expected =
+                            Node3 ( 1, 1 ) ( 3, 1 ) (Node2 ( 0, 1 ) Empty Empty) (Node2 ( 2, 1 ) Empty Empty) (Node2 ( 4, 2 ) Empty Empty)
+                    in
+                    Expect.equal expected actual
+            ]
         , fuzz (map3 toList3 int int int) "order of insertion with 3 elements does not matter" <|
             \aList ->
                 let
@@ -51,6 +63,18 @@ suite =
                             |> List.all (\tree -> tree == aTree)
                 in
                 Expect.true "all trees should be the same" same
+
+        -- , fuzz (list int) "fromList toList sorts the original list" <|
+        --     \aList ->
+        --         let
+        --             aTree =
+        --                 Tree.fromList aList
+        --             actual =
+        --                 Tree.toList aTree
+        --             expected =
+        --                 List.sort aList
+        --         in
+        --             Expect.equal actual expected
         ]
 
 
