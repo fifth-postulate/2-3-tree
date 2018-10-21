@@ -359,22 +359,57 @@ insert element tree =
 
 toList : Tree a -> List a
 toList aTree =
-    case aTree of
-        Empty ->
+    let
+        emptyCase _ =
             []
 
-        Node2 ( a, aCount ) left right ->
+        node2Case ( a, aCount ) left right =
             List.concat
-                [ toList left
+                [ left
                 , List.repeat aCount a
-                , toList right
+                , right
                 ]
 
-        Node3 ( a, aCount ) ( b, bCount ) left middle right ->
+        node3Case (a, aCount) (b, bCount) left middle right =
             List.concat
-                [ toList left
+                [ left
                 , List.repeat aCount a
-                , toList middle
+                , middle
                 , List.repeat bCount b
-                , toList right
+                , right
                 ]
+    in
+    walk emptyCase node2Case node3Case aTree
+
+walk : (() -> o) -> (( a, Int ) -> o -> o -> o) -> (( a, Int ) -> ( a, Int ) -> o -> o -> o -> o) -> Tree a -> o
+walk emptyCase node2Case node3Case tree =
+    let
+        recurse =
+            walk emptyCase node2Case node3Case
+    in
+    case tree of
+        Empty ->
+            emptyCase ()
+
+        Node2 data left right ->
+            let
+                walkedLeft =
+                    recurse left
+
+                walkedRight =
+                    recurse right
+            in
+            node2Case data walkedLeft walkedRight
+
+        Node3 aData bData left middle right ->
+            let
+                walkedLeft =
+                    recurse left
+
+                walkedMiddle =
+                    recurse middle
+
+                walkedRight =
+                    recurse right
+            in
+            node3Case aData bData walkedLeft walkedMiddle walkedRight
